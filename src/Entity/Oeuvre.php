@@ -55,12 +55,19 @@ class Oeuvre
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'oeuvreRecouverte')]
     private Collection $oeuvres;
 
+    /**
+     * @var Collection<int, Photo>
+     */
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'oeuvre', orphanRemoval: true)]
+    private Collection $benevole;
+
     public function __construct()
     {
         $this->artistes = new ArrayCollection();
         $this->techniques = new ArrayCollection();
         $this->oeuvreRecouverte = new ArrayCollection();
         $this->oeuvres = new ArrayCollection();
+        $this->benevole = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -222,6 +229,36 @@ class Oeuvre
     {
         if ($this->oeuvres->removeElement($oeuvre)) {
             $oeuvre->removeOeuvreRecouverte($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Photo>
+     */
+    public function getBenevole(): Collection
+    {
+        return $this->benevole;
+    }
+
+    public function addBenevole(Photo $benevole): static
+    {
+        if (!$this->benevole->contains($benevole)) {
+            $this->benevole->add($benevole);
+            $benevole->setOeuvre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBenevole(Photo $benevole): static
+    {
+        if ($this->benevole->removeElement($benevole)) {
+            // set the owning side to null (unless already changed)
+            if ($benevole->getOeuvre() === $this) {
+                $benevole->setOeuvre(null);
+            }
         }
 
         return $this;
