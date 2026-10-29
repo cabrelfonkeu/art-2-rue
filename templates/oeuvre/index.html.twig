@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les œuvres{% endblock %}
+
+{% block body %}
+    <h1>Les œuvres</h1>
+
+    {% for oeuvre in oeuvres %}
+        <article>
+            <h2><a href="{{ path('app_oeuvre_show', {id: oeuvre.id}) }}">{{ oeuvre.titre }}</a></h2>
+            <p>{{ oeuvre.lieu.nom }}</p>
+        </article>
+    {% else %}
+        <p>Aucune œuvre pour le moment.</p>
+    {% endfor %}
+{% endblock %}

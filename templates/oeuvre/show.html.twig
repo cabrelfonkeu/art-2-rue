@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ oeuvre.titre }}{% endblock %}
+
+{% block body %}
+    <h1>{{ oeuvre.titre }}</h1>
+    <p>{{ oeuvre.description }}</p>
+    <p>Lieu : {{ oeuvre.lieu.nom }}, {{ oeuvre.lieu.adresse }}</p>
+
+    <h2>Photos</h2>
+    {% for photo in oeuvre.photos %}
+        <figure>
+            <img src="{{ asset('uploads/photos/' ~ photo.nomFichier) }}" alt="{{ oeuvre.titre }}" width="400">
+            <figcaption>{{ photo.datePriseVue|date('d/m/Y') }} {% if photo.etatOeuvre %}({{ photo.etatOeuvre }}){% endif %}</figcaption>
+        </figure>
+    {% else %}
+        <p>Aucune photo.</p>
+    {% endfor %}
+
+    <p><a href="{{ path('app_oeuvre_index') }}">Retour à la liste</a></p>
+{% endblock %}
