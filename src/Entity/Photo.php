@@ -22,11 +22,11 @@ class Photo
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $etatoeuvre = null;
 
-    #[ORM\ManyToOne(inversedBy: 'benevole')]
+    #[ORM\ManyToOne(targetEntity: Oeuvre::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?oeuvre $oeuvre = null;
+    private ?Oeuvre $oeuvre = null;
 
-    #[ORM\ManyToOne(inversedBy: 'photos')]
+    #[ORM\ManyToOne(targetEntity: Benevole::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Benevole $benevole = null;
 
@@ -71,12 +71,12 @@ class Photo
         return $this;
     }
 
-    public function getOeuvre(): ?oeuvre
+    public function getOeuvre(): ?Oeuvre
     {
         return $this->oeuvre;
     }
 
-    public function setOeuvre(?oeuvre $oeuvre): static
+    public function setOeuvre(?Oeuvre $oeuvre): static
     {
         $this->oeuvre = $oeuvre;
 

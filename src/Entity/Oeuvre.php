@@ -28,13 +28,13 @@ class Oeuvre
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $datedestruction = null;
 
-    #[ORM\ManyToOne]
-    private ?lieu $lieu = null;
+    #[ORM\ManyToOne(targetEntity: Lieu::class)]
+    private ?Lieu $lieu = null;
 
     /**
-     * @var Collection<int, artiste>
+     * @var Collection<int, Artiste>
      */
-    #[ORM\ManyToMany(targetEntity: artiste::class, inversedBy: 'oeuvres')]
+    #[ORM\ManyToMany(targetEntity: Artiste::class, inversedBy: 'oeuvres')]
     private Collection $artistes;
 
     /**
@@ -43,31 +43,20 @@ class Oeuvre
     #[ORM\ManyToMany(targetEntity: Technique::class, inversedBy: 'oeuvres')]
     private Collection $techniques;
 
-    /**
-     * @var Collection<int, self>
-     */
-    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'oeuvres')]
-    private Collection $oeuvreRecouverte;
-
-    /**
-     * @var Collection<int, self>
-     */
-    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'oeuvreRecouverte')]
-    private Collection $oeuvres;
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    private ?self $oeuvreRecouverte = null;
 
     /**
      * @var Collection<int, Photo>
      */
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'oeuvre', orphanRemoval: true)]
-    private Collection $benevole;
+    private Collection $photos;
 
     public function __construct()
     {
         $this->artistes = new ArrayCollection();
         $this->techniques = new ArrayCollection();
-        $this->oeuvreRecouverte = new ArrayCollection();
-        $this->oeuvres = new ArrayCollection();
-        $this->benevole = new ArrayCollection();
+        $this->photos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -123,12 +112,12 @@ class Oeuvre
         return $this;
     }
 
-    public function getLieu(): ?lieu
+    public function getLieu(): ?Lieu
     {
         return $this->lieu;
     }
 
-    public function setLieu(?lieu $lieu): static
+    public function setLieu(?Lieu $lieu): static
     {
         $this->lieu = $lieu;
 
@@ -136,14 +125,14 @@ class Oeuvre
     }
 
     /**
-     * @return Collection<int, artiste>
+     * @return Collection<int, Artiste>
      */
     public function getArtistes(): Collection
     {
         return $this->artistes;
     }
 
-    public function addArtiste(artiste $artiste): static
+    public function addArtiste(Artiste $artiste): static
     {
         if (!$this->artistes->contains($artiste)) {
             $this->artistes->add($artiste);
@@ -152,7 +141,7 @@ class Oeuvre
         return $this;
     }
 
-    public function removeArtiste(artiste $artiste): static
+    public function removeArtiste(Artiste $artiste): static
     {
         $this->artistes->removeElement($artiste);
 
@@ -183,53 +172,14 @@ class Oeuvre
         return $this;
     }
 
-    /**
-     * @return Collection<int, self>
-     */
-    public function getOeuvreRecouverte(): Collection
+    public function getOeuvreRecouverte(): ?self
     {
         return $this->oeuvreRecouverte;
     }
 
-    public function addOeuvreRecouverte(self $oeuvreRecouverte): static
+    public function setOeuvreRecouverte(?self $oeuvreRecouverte): static
     {
-        if (!$this->oeuvreRecouverte->contains($oeuvreRecouverte)) {
-            $this->oeuvreRecouverte->add($oeuvreRecouverte);
-        }
-
-        return $this;
-    }
-
-    public function removeOeuvreRecouverte(self $oeuvreRecouverte): static
-    {
-        $this->oeuvreRecouverte->removeElement($oeuvreRecouverte);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getOeuvres(): Collection
-    {
-        return $this->oeuvres;
-    }
-
-    public function addOeuvre(self $oeuvre): static
-    {
-        if (!$this->oeuvres->contains($oeuvre)) {
-            $this->oeuvres->add($oeuvre);
-            $oeuvre->addOeuvreRecouverte($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOeuvre(self $oeuvre): static
-    {
-        if ($this->oeuvres->removeElement($oeuvre)) {
-            $oeuvre->removeOeuvreRecouverte($this);
-        }
+        $this->oeuvreRecouverte = $oeuvreRecouverte;
 
         return $this;
     }
@@ -237,27 +187,26 @@ class Oeuvre
     /**
      * @return Collection<int, Photo>
      */
-    public function getBenevole(): Collection
+    public function getPhotos(): Collection
     {
-        return $this->benevole;
+        return $this->photos;
     }
 
-    public function addBenevole(Photo $benevole): static
+    public function addPhoto(Photo $photo): static
     {
-        if (!$this->benevole->contains($benevole)) {
-            $this->benevole->add($benevole);
-            $benevole->setOeuvre($this);
+        if (!$this->photos->contains($photo)) {
+            $this->photos->add($photo);
+            $photo->setOeuvre($this);
         }
 
         return $this;
     }
 
-    public function removeBenevole(Photo $benevole): static
+    public function removePhoto(Photo $photo): static
     {
-        if ($this->benevole->removeElement($benevole)) {
-            // set the owning side to null (unless already changed)
-            if ($benevole->getOeuvre() === $this) {
-                $benevole->setOeuvre(null);
+        if ($this->photos->removeElement($photo)) {
+            if ($photo->getOeuvre() === $this) {
+                $photo->setOeuvre(null);
             }
         }
 
