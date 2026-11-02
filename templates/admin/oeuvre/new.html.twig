@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une œuvre{% endblock %}
+
+{% block body %}
+    <h1>Ajouter une œuvre</h1>
+
+    {{ include('admin/oeuvre/_form.html.twig') }}
+
+    <a class="btn btn-secondary mt-3" href="{{ path('app_admin_oeuvre_index') }}">Retour à la liste</a>
+{% endblock %}

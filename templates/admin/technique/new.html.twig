@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Technique{% endblock %}
+{% block title %}Ajouter une technique{% endblock %}
 
 {% block body %}
-    <h1>Create new Technique</h1>
+    <h1>Ajouter une technique</h1>
 
     {{ include('admin/technique/_form.html.twig') }}
 
-    <a href="{{ path('app_admin_technique_index') }}">back to list</a>
+    <a class="btn btn-secondary mt-3" href="{{ path('app_admin_technique_index') }}">Retour à la liste</a>
 {% endblock %}

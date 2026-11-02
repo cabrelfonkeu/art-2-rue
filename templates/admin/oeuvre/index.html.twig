@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Œuvres{% endblock %}
+
+{% block body %}
+    <h1>Œuvres</h1>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Lieu</th>
+            <th>Artistes</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for oeuvre in oeuvres %}
+            <tr>
+                <td>{{ oeuvre.titre }}</td>
+                <td>{{ oeuvre.lieu.nom ?? '' }}</td>
+                <td>{{ oeuvre.artistes|map(a => a.pseudonyme)|join(', ') }}</td>
+                <td>
+                    <a class="btn btn-warning" href="{{ path('app_admin_oeuvre_edit', {'id': oeuvre.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucune œuvre</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="{{ path('app_admin_oeuvre_new') }}">Ajouter une œuvre</a>
+{% endblock %}
