@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Photos{% endblock %}
+
+{% block body %}
+    <h1>Photos</h1>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Photo</th>
+            <th>Œuvre</th>
+            <th>Ajoutée par</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for photo in photos %}
+            <tr>
+                <td><img src="{{ asset('uploads/photos/' ~ photo.nomfichier) }}" alt="" height="60"></td>
+                <td>{{ photo.oeuvre.titre }}</td>
+                <td>{{ photo.benevole.prenom }} {{ photo.benevole.nom }}</td>
+                <td>{{ photo.dateprisevue|date('d/m/Y H:i') }}</td>
+                <td>{{ photo.utilisateur.email }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="{{ path('app_admin_photo_edit', {'id': photo.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucune photo</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="{{ path('app_admin_photo_new') }}">Ajouter une photo</a>
+{% endblock %}

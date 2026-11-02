@@ -5,12 +5,44 @@
 {% block body %}
     <h1>Les œuvres</h1>
 
-    {% for oeuvre in oeuvres %}
-        <article>
-            <h2><a href="{{ path('app_oeuvre_show', {id: oeuvre.id}) }}">{{ oeuvre.titre }}</a></h2>
-            <p>{{ oeuvre.lieu.nom }}</p>
-        </article>
-    {% else %}
-        <p>Aucune œuvre pour le moment.</p>
-    {% endfor %}
+    <form method="get" class="row g-2 mb-4">
+        <div class="col-auto">
+            <select name="quartier" class="form-select">
+                <option value="">Tous les quartiers</option>
+                {% for q in quartiers %}
+                    <option value="{{ q }}" {{ q == quartier_choisi ? 'selected' }}>{{ q }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary">Filtrer</button>
+        </div>
+    </form>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for oeuvre in oeuvres %}
+            {% set photo = oeuvre.photos|first %}
+            <div class="col">
+                <div class="card h-100">
+                    {% if photo %}
+                        <img src="{{ asset('uploads/photos/' ~ photo.nomfichier) }}" class="card-img-top" alt="{{ oeuvre.titre }}" style="height:220px; object-fit:cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ oeuvre.titre }}</h5>
+                        <p class="card-text text-muted">
+                            {{ oeuvre.lieu.nom }}{% if oeuvre.lieu.quartier %} · {{ oeuvre.lieu.quartier }}{% endif %}
+                        </p>
+                        {% if oeuvre.datedestruction %}
+                            <span class="badge bg-secondary">Disparue</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-primary btn-sm" href="{{ path('app_oeuvre_show', {id: oeuvre.id}) }}">Voir l'œuvre</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucune œuvre pour le moment.</p>
+        {% endfor %}
+    </div>
 {% endblock %}

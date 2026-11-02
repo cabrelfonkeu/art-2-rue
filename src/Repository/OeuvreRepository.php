@@ -16,6 +16,20 @@ class OeuvreRepository extends ServiceEntityRepository
         parent::__construct($registry, Oeuvre::class);
     }
 
+    public function findByQuartier(?string $quartier): array
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->join('o.lieu', 'l')
+            ->addSelect('l')
+            ->orderBy('o.titre', 'ASC');
+
+        if ($quartier) {
+            $qb->andWhere('l.quartier = :quartier')->setParameter('quartier', $quartier);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Oeuvre[] Returns an array of Oeuvre objects
 //     */

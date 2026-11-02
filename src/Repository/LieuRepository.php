@@ -16,6 +16,18 @@ class LieuRepository extends ServiceEntityRepository
         parent::__construct($registry, Lieu::class);
     }
 
+    public function findQuartiers(): array
+    {
+        $lignes = $this->createQueryBuilder('l')
+            ->select('DISTINCT l.quartier')
+            ->where('l.quartier IS NOT NULL')
+            ->orderBy('l.quartier', 'ASC')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_column($lignes, 'quartier');
+    }
+
 //    /**
 //     * @return Lieu[] Returns an array of Lieu objects
 //     */

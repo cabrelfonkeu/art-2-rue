@@ -26,9 +26,9 @@ class Photo
     #[ORM\JoinColumn(nullable: false)]
     private ?Oeuvre $oeuvre = null;
 
-    #[ORM\ManyToOne(targetEntity: Benevole::class, inversedBy: 'photos')]
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Benevole $benevole = null;
+    private ?Utilisateur $utilisateur = null;
 
     public function getId(): ?int
     {
@@ -83,14 +83,14 @@ class Photo
         return $this;
     }
 
-    public function getBenevole(): ?Benevole
+    public function getUtilisateur(): ?Utilisateur
     {
-        return $this->benevole;
+        return $this->utilisateur;
     }
 
-    public function setBenevole(?Benevole $benevole): static
+    public function setUtilisateur(?Utilisateur $utilisateur): static
     {
-        $this->benevole = $benevole;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

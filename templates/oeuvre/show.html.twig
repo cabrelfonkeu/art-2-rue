@@ -4,18 +4,50 @@
 
 {% block body %}
     <h1>{{ oeuvre.titre }}</h1>
+
     <p>{{ oeuvre.description }}</p>
-    <p>Lieu : {{ oeuvre.lieu.nom }}, {{ oeuvre.lieu.adresse }}</p>
+
+    <ul class="list-unstyled">
+        <li><strong>Lieu :</strong> {{ oeuvre.lieu.nom }}, {{ oeuvre.lieu.adresse }}</li>
+        {% if oeuvre.datecreation %}
+            <li><strong>Créée le :</strong> {{ oeuvre.datecreation|date('d/m/Y') }}</li>
+        {% endif %}
+        {% if oeuvre.datedestruction %}
+            <li><strong>Disparue le :</strong> {{ oeuvre.datedestruction|date('d/m/Y') }}</li>
+        {% endif %}
+        <li><strong>Artistes :</strong> {{ oeuvre.artistes|map(a => a.pseudonyme)|join(', ') }}</li>
+        <li><strong>Techniques :</strong> {{ oeuvre.techniques|map(t => t.nom)|join(', ') }}</li>
+        {% if oeuvre.oeuvreRecouverte %}
+            <li><strong>Recouvre :</strong>
+                <a href="{{ path('app_oeuvre_show', {id: oeuvre.oeuvreRecouverte.id}) }}">{{ oeuvre.oeuvreRecouverte.titre }}</a>
+            </li>
+        {% endif %}
+    </ul>
+
+    {% if oeuvre.lieu.latitude and oeuvre.lieu.longitude %}
+        <a class="btn btn-outline-secondary btn-sm mb-3"
+           href="https://www.openstreetmap.org/?mlat={{ oeuvre.lieu.latitude }}&mlon={{ oeuvre.lieu.longitude }}#map=17/{{ oeuvre.lieu.latitude }}/{{ oeuvre.lieu.longitude }}"
+           target="_blank" rel="noopener">Voir sur la carte</a>
+    {% endif %}
 
     <h2>Photos</h2>
-    {% for photo in oeuvre.photos %}
-        <figure>
-            <img src="{{ asset('uploads/photos/' ~ photo.nomFichier) }}" alt="{{ oeuvre.titre }}" width="400">
-            <figcaption>{{ photo.datePriseVue|date('d/m/Y') }} {% if photo.etatOeuvre %}({{ photo.etatOeuvre }}){% endif %}</figcaption>
-        </figure>
-    {% else %}
-        <p>Aucune photo.</p>
-    {% endfor %}
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+        {% for photo in oeuvre.photos %}
+            <div class="col">
+                <div class="card">
+                    <img src="{{ asset('uploads/photos/' ~ photo.nomfichier) }}" class="card-img-top" alt="{{ oeuvre.titre }}">
+                    <div class="card-body">
+                        <p class="card-text small">
+                            {{ photo.dateprisevue|date('d/m/Y') }}
+                            {% if photo.etatoeuvre %}· {{ photo.etatoeuvre }}{% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucune photo.</p>
+        {% endfor %}
+    </div>
 
-    <p><a href="{{ path('app_oeuvre_index') }}">Retour à la liste</a></p>
+    <a class="btn btn-secondary mt-4" href="{{ path('app_oeuvre_index') }}">Retour à la liste</a>
 {% endblock %}

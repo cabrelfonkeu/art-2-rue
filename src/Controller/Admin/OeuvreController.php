@@ -3,13 +3,18 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Oeuvre;
+use App\Entity\Photo;
 use App\Form\OeuvreType;
 use App\Repository\OeuvreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/oeuvre')]
 final class OeuvreController extends AbstractController
@@ -23,14 +28,30 @@ final class OeuvreController extends AbstractController
     }
 
     #[Route('/new', name: 'app_admin_oeuvre_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger,
+        #[Autowire('%kernel.project_dir%/public/uploads/photos')] string $dossier,
+    ): Response {
         $oeuvre = new Oeuvre();
-        $form = $this->createForm(OeuvreType::class, $oeuvre);
+        $form = $this->createForm(OeuvreType::class, $oeuvre, ['avec_photo' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($oeuvre);
+
+            $fichier = $form->get('fichier_photo')->getData();
+            if ($fichier) {
+                $photo = new Photo();
+                $photo->setOeuvre($oeuvre);
+                $photo->setUtilisateur($this->getUser());
+                $photo->setDateprisevue(new \DateTime());
+                $photo->setEtatoeuvre($form->get('etat_photo')->getData());
+                $photo->setNomfichier($this->enregistrer($fichier, $slugger, $dossier));
+                $entityManager->persist($photo);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_admin_oeuvre_index', [], Response::HTTP_SEE_OTHER);
@@ -77,5 +98,14 @@ final class OeuvreController extends AbstractController
         }
 
         return $this->redirectToRoute('app_admin_oeuvre_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    private function enregistrer(UploadedFile $fichier, SluggerInterface $slugger, string $dossier): string
+    {
+        $base = $slugger->slug(pathinfo($fichier->getClientOriginalName(), PATHINFO_FILENAME));
+        $nom = $base.'-'.uniqid().'.'.$fichier->guessExtension();
+        $fichier->move($dossier, $nom);
+
+        return $nom;
     }
 }

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bénévoles{% endblock %}
+
+{% block body %}
+    <h1>Bénévoles</h1>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for benevole in benevoles %}
+            <tr>
+                <td>{{ benevole.nom }}</td>
+                <td>{{ benevole.prenom }}</td>
+                <td>{{ benevole.email }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="{{ path('app_admin_benevole_edit', {'id': benevole.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucun bénévole</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="{{ path('app_admin_benevole_new') }}">Ajouter un bénévole</a>
+{% endblock %}

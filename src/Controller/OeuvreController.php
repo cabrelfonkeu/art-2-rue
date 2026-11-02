@@ -3,18 +3,24 @@
 namespace App\Controller;
 
 use App\Entity\Oeuvre;
+use App\Repository\LieuRepository;
 use App\Repository\OeuvreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class OeuvreController extends AbstractController
 {
     #[Route('/oeuvres', name: 'app_oeuvre_index')]
-    public function index(OeuvreRepository $repository): Response
+    public function index(Request $request, OeuvreRepository $oeuvreRepository, LieuRepository $lieuRepository): Response
     {
+        $quartier = $request->query->getString('quartier');
+
         return $this->render('oeuvre/index.html.twig', [
-            'oeuvres' => $repository->findAll(),
+            'oeuvres' => $oeuvreRepository->findByQuartier($quartier ?: null),
+            'quartiers' => $lieuRepository->findQuartiers(),
+            'quartier_choisi' => $quartier,
         ]);
     }
 
