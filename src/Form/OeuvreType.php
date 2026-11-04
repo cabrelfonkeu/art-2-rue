@@ -43,6 +43,8 @@ class OeuvreType extends AbstractType
                 'label' => 'Lieu',
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
+                'required' => false,
+                'placeholder' => 'Choisir un lieu existant',
             ])
             ->add('artistes', EntityType::class, [
                 'label' => 'Artistes',
@@ -84,6 +86,41 @@ class OeuvreType extends AbstractType
                 ])
                 ->add('etat_photo', TextType::class, [
                     'label' => 'État de l\'œuvre sur la photo',
+                    'mapped' => false,
+                    'required' => false,
+                ])
+                ->add('nouveau_lieu_nom', TextType::class, [
+                    'label' => 'Ou nouveau lieu : nom',
+                    'mapped' => false,
+                    'required' => false,
+                ])
+                ->add('nouveau_lieu_adresse', TextType::class, [
+                    'label' => 'Nouveau lieu : adresse',
+                    'mapped' => false,
+                    'required' => false,
+                ])
+                ->add('nouveau_lieu_quartier', TextType::class, [
+                    'label' => 'Nouveau lieu : quartier',
+                    'mapped' => false,
+                    'required' => false,
+                ])
+                ->add('nouveau_lieu_latitude', TextType::class, [
+                    'label' => 'Nouveau lieu : latitude',
+                    'mapped' => false,
+                    'required' => false,
+                ])
+                ->add('nouveau_lieu_longitude', TextType::class, [
+                    'label' => 'Nouveau lieu : longitude',
+                    'mapped' => false,
+                    'required' => false,
+                ])
+                ->add('nouveaux_artistes', TextType::class, [
+                    'label' => 'Nouveaux artistes (pseudonymes séparés par des virgules)',
+                    'mapped' => false,
+                    'required' => false,
+                ])
+                ->add('nouvelles_techniques', TextType::class, [
+                    'label' => 'Nouvelles techniques (séparées par des virgules)',
                     'mapped' => false,
                     'required' => false,
                 ]);
