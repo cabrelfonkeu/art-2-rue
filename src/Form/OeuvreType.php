@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class OeuvreType extends AbstractType
 {
@@ -73,10 +74,11 @@ class OeuvreType extends AbstractType
         if ($options['avec_photo']) {
             $builder
                 ->add('fichier_photo', FileType::class, [
-                    'label' => 'Photo de l\'œuvre (facultatif)',
+                    'label' => 'Photo de l\'œuvre',
                     'mapped' => false,
-                    'required' => false,
+                    'required' => true,
                     'constraints' => [
+                        new NotNull(message: 'La photo est obligatoire.'),
                         new File(
                             maxSize: '5M',
                             mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
@@ -90,7 +92,7 @@ class OeuvreType extends AbstractType
                     'required' => false,
                 ])
                 ->add('nouveau_lieu_nom', TextType::class, [
-                    'label' => 'Ou nouveau lieu : nom',
+                    'label' => 'nouveau lieu : nom',
                     'mapped' => false,
                     'required' => false,
                 ])
